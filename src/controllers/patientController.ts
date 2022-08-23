@@ -35,7 +35,7 @@ export const createPatient = (
     dob,
     address,
     photoUrl,
-    specialAttention,
+    specialAttention:Boolean(specialAttention),
     allergies,
   })
     .then((data) => res.json(data))
@@ -89,7 +89,7 @@ export const updatePatient = (
     dob,
     address,
     photoUrl,
-    specialAttention,
+    specialAttention:Boolean(specialAttention),
     allergies,patientId:+id})
     .then((data) => res.json(data))
     .catch((err) => next(err));

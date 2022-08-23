@@ -6,7 +6,7 @@ export interface IPatient {
   dob: string;
   address: string;
   photoUrl: string;
-  specialAttention: string;
+  specialAttention: boolean;
   allergies: string;
 }
 
