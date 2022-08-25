@@ -6,6 +6,7 @@ import tokenRouter from './tokenRouter';
 import logoutRouter from './logoutRouter';
 import userRouter from './userRouter';
 import patientRouter from './patientRouter';
+import allergyRouter from './allergyRouter';
 // import uploadRouter from './uploadRouter';
 
 const router = Router();
@@ -18,5 +19,6 @@ router.use('/logout', logoutRouter);
 router.use(authenticate);
 router.use('/user', userRouter);
 router.use('/patient', patientRouter);
+router.use('/allergy', allergyRouter);
 
 export default router;
