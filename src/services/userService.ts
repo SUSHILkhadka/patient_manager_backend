@@ -4,7 +4,7 @@ import { IUser, IUserToInsert } from '../domains/IUser';
 import UserModel from '../models/userModel';
 import logger from '../misc/Logger';
 import CustomError from '../middlewares/CustomError';
-import { generatePasswordHash } from '../utils/passwordUtils';
+import { generatePasswordHash } from '../utils/passwordHashGenerator';
 import bcrypt from 'bcrypt';
 
 export const createUser = async (userToInsert: IUserToInsert): Promise<ISuccess<IUser>> => {

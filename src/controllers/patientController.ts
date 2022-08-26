@@ -10,15 +10,8 @@ export const createPatient = (
   res: Response,
   next: NextFunction
 ) => {
-  const {
-    name,
-    email,
-    contact,
-    dob,
-    address,
-    photoUrl,
-    specialAttention,
-  } = req.body;
+  const { name, email, contact, dob, address, photoUrl, specialAttention } =
+    req.body;
   const userId = req.id;
   if (!userId) {
     return next(
@@ -28,12 +21,9 @@ export const createPatient = (
       )
     );
   }
-  if(!stringValidator(name)){
+  if (!stringValidator(name)) {
     return next(
-      new CustomError(
-        "name cann't be empty",
-        StatusCodes.BAD_REQUEST
-      )
+      new CustomError("name cann't be empty", StatusCodes.BAD_REQUEST)
     );
   }
   PatientService.createPatient({
@@ -72,15 +62,8 @@ export const updatePatient = (
   res: Response,
   next: NextFunction
 ) => {
-  const {
-    name,
-    email,
-    contact,
-    dob,
-    address,
-    photoUrl,
-    specialAttention,
-  } = req.body;
+  const { name, email, contact, dob, address, photoUrl, specialAttention } =
+    req.body;
   const userId = req.id;
   const id = req.params.patientId;
   if (!userId || !id) {
@@ -91,12 +74,9 @@ export const updatePatient = (
       )
     );
   }
-  if(!stringValidator(name)){
+  if (!stringValidator(name)) {
     return next(
-      new CustomError(
-        "name cann't be empty",
-        StatusCodes.BAD_REQUEST
-      )
+      new CustomError("name cann't be empty", StatusCodes.BAD_REQUEST)
     );
   }
   PatientService.updatePatient({
@@ -127,7 +107,7 @@ export const deletePatient = (
       )
     );
   }
-  
+
   PatientService.deletePatient(+id)
     .then((data) => res.json(data))
     .catch((err) => next(err));

@@ -20,12 +20,9 @@ export const addAllergy = (
       )
     );
   }
-  if(!stringValidator(name)){
+  if (!stringValidator(name)) {
     return next(
-      new CustomError(
-        "name cann't be empty",
-        StatusCodes.BAD_REQUEST
-      )
+      new CustomError("name cann't be empty", StatusCodes.BAD_REQUEST)
     );
   }
   AllergyService.addAllergy({
@@ -50,7 +47,7 @@ export const getAllAllergiesByPatientId = (
       )
     );
   }
-  const patientId  = req.params.patientId;
+  const patientId = req.params.patientId;
   AllergyService.getAllAllergiesByPatientId(+patientId)
     .then((data) => res.json(data))
     .catch((err) => next(err));
@@ -72,12 +69,9 @@ export const updateAllergy = (
       )
     );
   }
-  if(!stringValidator(name)){
+  if (!stringValidator(name)) {
     return next(
-      new CustomError(
-        "name cann't be empty",
-        StatusCodes.BAD_REQUEST
-      )
+      new CustomError("name cann't be empty", StatusCodes.BAD_REQUEST)
     );
   }
   AllergyService.updateAllergy({
