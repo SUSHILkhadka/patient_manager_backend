@@ -3,12 +3,18 @@ import { StatusCodes } from 'http-status-codes';
 import { IRequestWithTokenData } from '../domains/IRequestWithTokenData';
 import CustomError from '../middlewares/CustomError';
 import * as UserService from '../services/userService';
+import { stringValidator } from '../utils/stringValidation';
 
 export const createUser = (req: Request, res: Response, next: NextFunction) => {
   const { name, email, password } = req.body;
 
-  if (!name || !email || !password) {
-    throw new CustomError('name, email and password are required', StatusCodes.BAD_REQUEST);
+  if(!stringValidator(name) || stringValidator(email) || stringValidator(password)){
+    return next(
+      new CustomError(
+        "name or email or password cann't be empty",
+        StatusCodes.BAD_REQUEST
+      )
+    );
   }
   UserService.createUser({ name, email, password })
     .then((data) => res.json(data))

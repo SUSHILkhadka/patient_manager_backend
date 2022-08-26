@@ -2,23 +2,15 @@ import { NextFunction, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import { IRequestWithTokenData } from "../domains/IRequestWithTokenData";
 import CustomError from "../middlewares/CustomError";
-import * as PatientService from "../services/patientService";
+import * as AllergyService from "../services/allergyService";
 import { stringValidator } from "../utils/stringValidation";
 
-export const createPatient = (
+export const addAllergy = (
   req: IRequestWithTokenData,
   res: Response,
   next: NextFunction
 ) => {
-  const {
-    name,
-    email,
-    contact,
-    dob,
-    address,
-    photoUrl,
-    specialAttention,
-  } = req.body;
+  const { name, patientId } = req.body;
   const userId = req.id;
   if (!userId) {
     return next(
@@ -36,20 +28,15 @@ export const createPatient = (
       )
     );
   }
-  PatientService.createPatient({
+  AllergyService.addAllergy({
     name,
-    email,
-    contact,
-    dob,
-    address,
-    photoUrl,
-    specialAttention: Boolean(specialAttention),
+    patientId,
   })
     .then((data) => res.json(data))
     .catch((err) => next(err));
 };
 
-export const getAllPatients = (
+export const getAllAllergiesByPatientId = (
   req: IRequestWithTokenData,
   res: Response,
   next: NextFunction
@@ -63,26 +50,20 @@ export const getAllPatients = (
       )
     );
   }
-  PatientService.getAllPatients()
+  const patientId  = req.params.patientId;
+  AllergyService.getAllAllergiesByPatientId(+patientId)
     .then((data) => res.json(data))
     .catch((err) => next(err));
 };
-export const updatePatient = (
+
+export const updateAllergy = (
   req: IRequestWithTokenData,
   res: Response,
   next: NextFunction
 ) => {
-  const {
-    name,
-    email,
-    contact,
-    dob,
-    address,
-    photoUrl,
-    specialAttention,
-  } = req.body;
+  const { name, patientId } = req.body;
   const userId = req.id;
-  const id = req.params.patientId;
+  const id = req.params.allergyId;
   if (!userId || !id) {
     return next(
       new CustomError(
@@ -99,26 +80,21 @@ export const updatePatient = (
       )
     );
   }
-  PatientService.updatePatient({
+  AllergyService.updateAllergy({
     name,
-    email,
-    contact,
-    dob,
-    address,
-    photoUrl,
-    specialAttention: Boolean(specialAttention),
-    patientId: +id,
+    patientId,
+    id: +id,
   })
     .then((data) => res.json(data))
     .catch((err) => next(err));
 };
-export const deletePatient = (
+export const deleteAllergy = (
   req: IRequestWithTokenData,
   res: Response,
   next: NextFunction
 ) => {
   const userId = req.id;
-  const id = req.params.patientId;
+  const id = req.params.allergyId;
   if (!userId || !id) {
     return next(
       new CustomError(
@@ -127,8 +103,7 @@ export const deletePatient = (
       )
     );
   }
-  
-  PatientService.deletePatient(+id)
+  AllergyService.deleteAllergy(+id)
     .then((data) => res.json(data))
     .catch((err) => next(err));
 };

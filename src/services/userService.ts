@@ -11,12 +11,12 @@ export const createUser = async (userToInsert: IUserToInsert): Promise<ISuccess<
   const { password } = userToInsert;
   const passwordHash = await generatePasswordHash(password);
 
-  logger.info('creating user =>userService.createUser');
+  logger.info('creating user ');
   const user = await UserModel.createUser({
     ...userToInsert,
     password: passwordHash,
   });
-  logger.info('created user successfully =>userService.createUser');
+  logger.info('created user successfully ');
 
   return {
     data: user,
@@ -24,18 +24,17 @@ export const createUser = async (userToInsert: IUserToInsert): Promise<ISuccess<
   };
 };
 export const getUserByEmail = async (email: string): Promise<ISuccess<IUser>> => {
-  logger.info('getting user by email =>userService.getUserByEmail');
+  logger.info('getting user by email');
   const user = await UserModel.getUserByEmail(email);
   if (!user) {
     throw new CustomError("user account doesn't exists", StatusCodes.NOT_FOUND);
   }
-  logger.info('got user by email successfully =>userService.getUserByEmail');
+  logger.info('got user by email successfully');
   return {
     data: user,
     message: 'user by email fetched successfully',
   };
 };
-
 
 export const updateUser = async (user: IUser, oldPassword: string): Promise<ISuccess<IUser>> => {
   const userForCheck = await UserModel.getUserByEmail(user.email);
@@ -47,9 +46,9 @@ export const updateUser = async (user: IUser, oldPassword: string): Promise<ISuc
 
   const password = user.password;
   const passwordHash = await generatePasswordHash(password);
-  logger.info('updating user =>userService.updateUser');
+  logger.info('updating user');
   const updatedUser = await UserModel.updateUser({ ...user, password: passwordHash });
-  logger.info('updated user successfully =>userService.updateUser');
+  logger.info('updated user successfully');
 
   return {
     data: updatedUser,
@@ -58,9 +57,9 @@ export const updateUser = async (user: IUser, oldPassword: string): Promise<ISuc
 };
 
 export const deleteUser = async (id: number): Promise<ISuccess<IUser>> => {
-  logger.info('deleting user =>userService.deleteUser');
+  logger.info('deleting user');
   const deletedUser = await UserModel.deleteUser(id);
-  logger.info('deleted user successfully =>userService.deleteUser');
+  logger.info('deleted user successfully');
 
   return {
     data: deletedUser,

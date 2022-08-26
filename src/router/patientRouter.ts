@@ -6,4 +6,5 @@ router.post('/', patientController.createPatient);
 router.get('/', patientController.getAllPatients);
 router.put('/:patientId', patientController.updatePatient);
 router.delete('/:patientId', patientController.deletePatient);
+
 export default router;

@@ -7,7 +7,6 @@ export interface IPatient {
   address: string;
   photoUrl: string;
   specialAttention: boolean;
-  allergies: string;
 }
 
 export type IPatientToInsert = Omit<IPatient, "patientId">;
