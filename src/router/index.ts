@@ -7,14 +7,14 @@ import logoutRouter from './logoutRouter';
 import userRouter from './userRouter';
 import patientRouter from './patientRouter';
 import allergyRouter from './allergyRouter';
-// import uploadRouter from './uploadRouter';
+import uploadRouter from './uploadRouter';
 
 const router = Router();
 router.use('/register', registerRouter);
 router.use('/login', loginRouter);
 router.use('/token', tokenRouter);
 router.use('/logout', logoutRouter);
-// router.use('/upload', uploadRouter);
+router.use('/upload', uploadRouter);
 
 router.use(authenticate);
 router.use('/user', userRouter);
