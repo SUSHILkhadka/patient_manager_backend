@@ -30,8 +30,7 @@ async function uploadFiles(req: any, res: Response, next: NextFunction) {
       upload_preset: 'contacts-photo',
     });
     logger.info('successfully uploaded image to cloudinary');
-
-    fs.unlinkSync(filePath); 
+    fs.unlinkSync(filePath);
     return res.json({ url: uploadResponse.url });
   } catch (e) {
     //heruko auto deletes this file
