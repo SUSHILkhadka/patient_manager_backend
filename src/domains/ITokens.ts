@@ -6,5 +6,4 @@ export interface ITokens<T> {
   expiresAtRefreshToken?: number;
   message: string;
 }
-
 export type ITokensAfterLogout = Omit<ITokens<any>, 'accessToken'>;

@@ -10,12 +10,9 @@ import User from '../models/userModel';
 import RefreshTokenModel from '../models/refreshTokenModel';
 import IRefreshToken from '../domains/IRefreshToken';
 import { IDataAtToken } from '../domains/IDataAtToken';
-
-
 dotenv.config();
-
 /**
- * 
+ *
  * @param email valid email as string
  * @param password valid password as string
  * @returns compares password hash and given password, if correct, returns access token and refresh token
@@ -31,10 +28,13 @@ export const login = async (email: string, password: string): Promise<ITokens<Us
   }
 
   //valid user
-  const accessToken = jwt.sign({ id: user.id, email: user.email }, process.env.JWT_SECRET as string, {
+  const accessToken = jwt.sign({ id: user.id, name: user.id, email: user.email }, process.env.JWT_SECRET as string, {
     expiresIn: EXPIRY_TIME,
   });
-  const refreshToken = jwt.sign({ id: user.id, email: user.email }, process.env.JWT_TOKEN_SECRET as string);
+  const refreshToken = jwt.sign(
+    { id: user.id, name: user.id, email: user.email },
+    process.env.JWT_TOKEN_SECRET as string
+  );
 
   //adding new refresh token to database
   await RefreshTokenModel.createRefreshToken({
@@ -47,22 +47,21 @@ export const login = async (email: string, password: string): Promise<ITokens<Us
     accessToken: accessToken,
     refreshToken: refreshToken,
     expiresAt: EXPIRY_TIME,
-    expiresAtRefreshToken: Date.now()+EXPIRY_TIME_REFRESH_TOKEN,
+    expiresAtRefreshToken: Date.now() + EXPIRY_TIME_REFRESH_TOKEN,
     message: 'login successfully',
   };
 };
 
-
 /**
- * 
+ *
  * @param refreshToken valid refreshtoken for getting new accesstoken after access toekn is expired
  * @returns new access token with new expiry time
  */
 
-export const getAccessToken = async (refreshToken: string): Promise<ITokens<IRefreshToken>> => {
+export const getAccessToken = async (refreshToken: string): Promise<ITokens<IDataAtToken>> => {
   const refreshTokenFromDb = (await RefreshTokenModel.getRefreshTokenByToken(refreshToken)) as IRefreshToken;
-  if (!refreshTokenFromDb || (+refreshTokenFromDb.expiresAt < Date.now())) {
-     await RefreshTokenModel.deleteRefreshTokenByToken(refreshToken)
+  if (!refreshTokenFromDb || +refreshTokenFromDb.expiresAt < Date.now()) {
+    await RefreshTokenModel.deleteRefreshTokenByToken(refreshToken);
     throw new CustomError('refresh token already expired.', StatusCodes.UNAUTHORIZED);
   }
 
@@ -71,19 +70,18 @@ export const getAccessToken = async (refreshToken: string): Promise<ITokens<IRef
     const { id, email } = dataAtToken;
     const newAccessToken = jwt.sign({ id, email }, process.env.JWT_SECRET as string, { expiresIn: EXPIRY_TIME });
     return {
-      data: refreshTokenFromDb,
+      data: dataAtToken,
       accessToken: newAccessToken,
       expiresAt: EXPIRY_TIME,
       message: 'got new accessToken successfully',
     };
   } catch {
-    throw new CustomError('invalid refresh token although it existed in database. So fetching new accessToken failed');
+    throw new CustomError('invalid refresh Token');
   }
 };
 
-
 /**
- * 
+ *
  * @param refreshToken current refresh token as string
  * @returns deletes refresh token from database and return deleted token
  */

@@ -24,7 +24,7 @@ class User {
     return updatedUser;
   }
   public static async deleteUser(id: number): Promise<IUser> {
-    const deletedUser = await db(this.table).where('id', id).del().returning("*");
+    const deletedUser = await db(this.table).where('id', id).del().returning('*');
     return deletedUser[0];
   }
 }

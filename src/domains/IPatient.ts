@@ -9,4 +9,4 @@ export interface IPatient {
   specialAttention: boolean;
 }
 
-export type IPatientToInsert = Omit<IPatient, "patientId">;
+export type IPatientToInsert = Omit<IPatient, 'patientId'>;
