@@ -5,9 +5,8 @@ import { IDataAtToken } from '../domains/IDataAtToken';
 import { IRequestWithTokenData } from '../domains/IRequestWithTokenData';
 import CustomError from './CustomError';
 
-
 /**
- * 
+ *
  * @param req user Request with access token in header
  * @param res Response
  * @param next NextFunction
@@ -19,8 +18,8 @@ const authenticate = async (req: IRequestWithTokenData, res: Response, next: Nex
     return next(err);
   }
   try {
-  const accessToken = req.headers.authorization.split(' ')[1];
-    const dataAtToken =  jwt.verify(accessToken, process.env.JWT_SECRET as string) as IDataAtToken;
+    const accessToken = req.headers.authorization.split(' ')[1];
+    const dataAtToken = jwt.verify(accessToken, process.env.JWT_SECRET as string) as IDataAtToken;
     req.id = dataAtToken.id;
     req.email = dataAtToken.email;
     return next();

@@ -4,7 +4,7 @@ import CustomError from '../middlewares/CustomError';
 import * as LoginService from '../services/loginService';
 
 /**
- * 
+ *
  * @param req request from user
  * @param res response after processing req
  * @param next next function

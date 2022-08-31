@@ -2,7 +2,7 @@ import bcrypt from 'bcrypt';
 import { SALT_ROUND } from '../constants/common';
 
 /**
- * 
+ *
  * @param password raw password as string, to be hashed
  * @returns hash of raw password
  */

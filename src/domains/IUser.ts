@@ -6,4 +6,3 @@ export interface IUser {
 }
 
 export type IUserToInsert = Omit<IUser, 'id'>;
-

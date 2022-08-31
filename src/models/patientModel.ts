@@ -15,15 +15,12 @@ class Patient {
   }
 
   public static async updatePatient(patient: IPatient): Promise<IPatient> {
-    const updatedPatient = await db(this.table)
-      .where({ patientId: patient.patientId })
-      .update(patient)
-      .returning('*');
+    const updatedPatient = await db(this.table).where({ patientId: patient.patientId }).update(patient).returning('*');
     return updatedPatient[0];
   }
 
   public static async deletePatient(patientId: number): Promise<IPatient> {
-    const _deletedPatient = await db(this.table).where({ patientId: patientId}).del().returning('*');
+    const _deletedPatient = await db(this.table).where({ patientId: patientId }).del().returning('*');
     return _deletedPatient[0];
   }
 }
