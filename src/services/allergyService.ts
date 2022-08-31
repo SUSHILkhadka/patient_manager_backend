@@ -1,6 +1,6 @@
 import StatusCodes from "http-status-codes";
 import { ISuccess } from "../domains/ISuccess";
-import AllergyModel from "../models/AllergyModel";
+import AllergyModel from "../models/allergyModel";
 import logger from "../misc/Logger";
 import CustomError from "../middlewares/CustomError";
 import { IAllergy, IAllergyToInsert } from "../domains/IAllergy";

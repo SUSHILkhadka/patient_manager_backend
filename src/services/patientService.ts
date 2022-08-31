@@ -1,6 +1,6 @@
 import StatusCodes from 'http-status-codes';
 import { ISuccess } from '../domains/ISuccess';
-import PatientModel from '../models/PatientModel';
+import PatientModel from '../models/patientModel';
 import logger from '../misc/Logger';
 import CustomError from '../middlewares/CustomError';
 import { IPatient, IPatientToInsert } from '../domains/IPatient';

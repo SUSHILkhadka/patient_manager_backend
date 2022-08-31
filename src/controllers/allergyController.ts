@@ -21,6 +21,7 @@ export const addAllergy = (
     );
   }
   if (!stringValidator(name)) {
+    console.log('asdf')
     return next(
       new CustomError("name cann't be empty", StatusCodes.BAD_REQUEST)
     );

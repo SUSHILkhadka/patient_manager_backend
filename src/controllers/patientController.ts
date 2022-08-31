@@ -57,6 +57,7 @@ export const getAllPatients = (
     .then((data) => res.json(data))
     .catch((err) => next(err));
 };
+
 export const updatePatient = (
   req: IRequestWithTokenData,
   res: Response,
@@ -92,6 +93,7 @@ export const updatePatient = (
     .then((data) => res.json(data))
     .catch((err) => next(err));
 };
+
 export const deletePatient = (
   req: IRequestWithTokenData,
   res: Response,
@@ -107,7 +109,6 @@ export const deletePatient = (
       )
     );
   }
-
   PatientService.deletePatient(+id)
     .then((data) => res.json(data))
     .catch((err) => next(err));
