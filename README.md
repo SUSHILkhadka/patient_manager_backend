@@ -6,4 +6,4 @@ Nodejs and typescript starter template
 
 - Clone this repository.
 - Install all the dependencies using `yarn` or `npm install`.
-- Start the server using `yarn start` or `npm run start`.
+- Start the server using `yarn dev` or `npm run dev`.
