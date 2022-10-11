@@ -13,7 +13,7 @@ export const addAllergy = (
   AllergyService.addAllergy({
     name,
     patientId,
-  }) 
+  })
     .then((data) => res.json(data))
     .catch((err) => next(err));
 };

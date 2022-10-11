@@ -1,12 +1,10 @@
 import { NextFunction, Request, Response } from 'express';
-import { StatusCodes } from 'http-status-codes';
 import { IRequestWithTokenData } from '../domains/IRequestWithTokenData';
-import CustomError from '../middlewares/CustomError';
+import { EmailIsRequiredError, InvalidAccessToken } from '../errors/errors';
 import * as UserService from '../services/userService';
 
 export const createUser = (req: Request, res: Response, next: NextFunction) => {
   const { name, email, password } = req.body;
-
   UserService.createUser({ name, email, password })
     .then((data) => res.json(data))
     .catch((err) => next(err));
@@ -19,7 +17,7 @@ export const getUserByEmail = (
 ) => {
   const { email } = req.body;
   if (!email) {
-    throw new CustomError('email is required', StatusCodes.BAD_REQUEST);
+    throw EmailIsRequiredError;
   }
   UserService.getUserByEmail(email)
     .then((data) => res.json(data))
@@ -35,9 +33,7 @@ export const updateUser = (
   const id = req.id;
   const email = req.email;
   if (!id || !email) {
-    return next(
-      new CustomError('Invalid access token', StatusCodes.UNAUTHORIZED)
-    );
+    return next(InvalidAccessToken);
   }
   UserService.updateUser({ name, password, id, email }, oldPassword)
     .then((data) => res.json(data))
@@ -50,9 +46,7 @@ export const deleteUser = (
 ) => {
   const id = req.id;
   if (!id) {
-    return next(
-      new CustomError('Invalid access token', StatusCodes.UNAUTHORIZED)
-    );
+    return next(InvalidAccessToken);
   }
   UserService.deleteUser(id)
     .then((data) => res.json(data))

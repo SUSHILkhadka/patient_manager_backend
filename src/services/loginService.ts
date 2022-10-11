@@ -1,12 +1,12 @@
 import bcrypt from 'bcrypt';
 import dotenv from 'dotenv';
-import StatusCodes from 'http-status-codes';
 import jwt from 'jsonwebtoken';
 import { EXPIRY_TIME, EXPIRY_TIME_REFRESH_TOKEN } from '../constants/common';
 import { IDataAtToken } from '../domains/IDataAtToken';
 import IRefreshToken from '../domains/IRefreshToken';
 import { ITokens } from '../domains/ITokens';
-import CustomError from '../middlewares/CustomError';
+import { InvalidCredentialsError, InvalidRefreshToken } from '../errors/errors';
+import logger from '../misc/Logger';
 import RefreshTokenModel from '../models/refreshTokenModel';
 import { default as User, default as UserModel } from '../models/userModel';
 dotenv.config();
@@ -20,25 +20,35 @@ export const login = async (
   email: string,
   password: string
 ): Promise<ITokens<User>> => {
+  logger.info('logging in');
   const user = await UserModel.getUserByEmail(email);
   if (!user) {
-    throw new CustomError('no email found', StatusCodes.BAD_REQUEST);
+    throw InvalidCredentialsError;
   }
   const isPasswordMatch = await bcrypt.compare(password, user.password);
   if (!isPasswordMatch) {
-    throw new CustomError('wrong password', StatusCodes.UNAUTHORIZED);
+    throw InvalidCredentialsError;
   }
 
   //valid user
+  const tokenDataToBeEncrypted = {
+    id: user.id,
+    name: user.name,
+    email: user.email,
+  };
+
   const accessToken = jwt.sign(
-    { id: user.id, name: user.name, email: user.email },
+    tokenDataToBeEncrypted,
     process.env.JWT_SECRET as string,
     {
       expiresIn: EXPIRY_TIME,
     }
   );
+
+  const expiryDateForRefreshToken = Date.now() + EXPIRY_TIME_REFRESH_TOKEN;
+
   const refreshToken = jwt.sign(
-    { id: user.id, name: user.name, email: user.email },
+    { ...tokenDataToBeEncrypted, expiryDateForRefreshToken },
     process.env.JWT_TOKEN_SECRET as string
   );
 
@@ -46,14 +56,13 @@ export const login = async (
   await RefreshTokenModel.createRefreshToken({
     refreshToken,
     id: user.id,
-    expiresAt: Date.now() + EXPIRY_TIME_REFRESH_TOKEN,
+    expiresAt: expiryDateForRefreshToken,
   });
+
+  logger.info('logged in successfully');
   return {
-    data: user,
     accessToken: accessToken,
     refreshToken: refreshToken,
-    expiresAt: EXPIRY_TIME,
-    expiresAtRefreshToken: Date.now() + EXPIRY_TIME_REFRESH_TOKEN,
     message: 'login successfully',
   };
 };
@@ -67,15 +76,14 @@ export const login = async (
 export const getAccessToken = async (
   refreshToken: string
 ): Promise<ITokens<IDataAtToken>> => {
+  logger.info('getting new access token');
   const refreshTokenFromDb = (await RefreshTokenModel.getRefreshTokenByToken(
     refreshToken
   )) as IRefreshToken;
+
   if (!refreshTokenFromDb || +refreshTokenFromDb.expiresAt < Date.now()) {
     await RefreshTokenModel.deleteRefreshTokenByToken(refreshToken);
-    throw new CustomError(
-      'refresh token already expired.',
-      StatusCodes.UNAUTHORIZED
-    );
+    throw InvalidRefreshToken;
   }
 
   try {
@@ -89,14 +97,15 @@ export const getAccessToken = async (
       process.env.JWT_SECRET as string,
       { expiresIn: EXPIRY_TIME }
     );
+
+    logger.info('got new access token sucessfully');
     return {
       data: dataAtToken,
       accessToken: newAccessToken,
-      expiresAt: EXPIRY_TIME,
       message: 'got new accessToken successfully',
     };
   } catch {
-    throw new CustomError('invalid refresh Token');
+    throw InvalidRefreshToken;
   }
 };
 
@@ -108,11 +117,11 @@ export const getAccessToken = async (
 export const logout = async (
   refreshToken: string
 ): Promise<ITokens<IRefreshToken>> => {
-  const deletedToken = await RefreshTokenModel.deleteRefreshTokenByToken(
-    refreshToken
-  );
+  logger.info('logging out');
+  await RefreshTokenModel.deleteRefreshTokenByToken(refreshToken);
+  logger.info('logged out successfully');
+
   return {
-    data: deletedToken,
     message: 'deleted above refresh token successfully',
   };
 };

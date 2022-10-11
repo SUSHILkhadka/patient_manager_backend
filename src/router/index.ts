@@ -8,6 +8,7 @@ import userRouter from './userRouter';
 import patientRouter from './patientRouter';
 import allergyRouter from './allergyRouter';
 import uploadRouter from './uploadRouter';
+import checkEmailRouter from './checkEmailRouter';
 
 const router = Router();
 router.use('/register', registerRouter);
@@ -15,6 +16,8 @@ router.use('/login', loginRouter);
 router.use('/token', tokenRouter);
 router.use('/logout', logoutRouter);
 router.use('/upload', uploadRouter);
+router.use('/checkEmail', checkEmailRouter);
+
 
 router.use(authenticate);
 router.use('/user', userRouter);

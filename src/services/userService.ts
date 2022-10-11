@@ -6,6 +6,7 @@ import logger from '../misc/Logger';
 import CustomError from '../middlewares/CustomError';
 import { generatePasswordHash } from '../utils/passwordHashGenerator';
 import bcrypt from 'bcrypt';
+import { InvalidCredentialsError } from '../errors/errors';
 
 export const createUser = async (userToInsert: IUserToInsert): Promise<ISuccess<IUser>> => {
   const { password } = userToInsert;
@@ -27,11 +28,10 @@ export const getUserByEmail = async (email: string): Promise<ISuccess<IUser>> =>
   logger.info('getting user by email');
   const user = await UserModel.getUserByEmail(email);
   if (!user) {
-    throw new CustomError("user account doesn't exists", StatusCodes.NOT_FOUND);
+    throw InvalidCredentialsError;
   }
   logger.info('got user by email successfully');
   return {
-    data: user,
     message: 'user by email fetched successfully',
   };
 };
