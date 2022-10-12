@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { InvalidRefreshToken } from '../errors/errors';
+import { InvalidRefreshTokenError } from '../errors/errors';
 import * as LoginService from '../services/loginService';
 
 /**
@@ -23,7 +23,7 @@ export const getAccessToken = (
 ) => {
   const { refreshToken } = req.body;
   if (!refreshToken) {
-    throw InvalidRefreshToken;
+    throw InvalidRefreshTokenError;
   }
   LoginService.getAccessToken(refreshToken)
     .then((data) => res.json(data))
@@ -33,7 +33,7 @@ export const getAccessToken = (
 export const logout = (req: Request, res: Response, next: NextFunction) => {
   const { refreshToken } = req.body;
   if (!refreshToken) {
-    throw InvalidRefreshToken;
+    throw InvalidRefreshTokenError;
   }
   LoginService.logout(refreshToken)
     .then((data) => res.json(data))

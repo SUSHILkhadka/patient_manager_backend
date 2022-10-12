@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { IRequestWithTokenData } from '../domains/IRequestWithTokenData';
-import { EmailIsRequiredError, InvalidAccessToken } from '../errors/errors';
+import { EmailIsRequiredError, InvalidAccessTokenError } from '../errors/errors';
 import * as UserService from '../services/userService';
 
 export const createUser = (req: Request, res: Response, next: NextFunction) => {
@@ -12,7 +12,7 @@ export const createUser = (req: Request, res: Response, next: NextFunction) => {
 
 export const getUserByEmail = (
   req: Request,
-  res: Response,
+  res: Response, 
   next: NextFunction
 ) => {
   const { email } = req.body;
@@ -33,7 +33,7 @@ export const updateUser = (
   const id = req.id;
   const email = req.email;
   if (!id || !email) {
-    return next(InvalidAccessToken);
+    return next(InvalidAccessTokenError);
   }
   UserService.updateUser({ name, password, id, email }, oldPassword)
     .then((data) => res.json(data))
@@ -46,7 +46,7 @@ export const deleteUser = (
 ) => {
   const id = req.id;
   if (!id) {
-    return next(InvalidAccessToken);
+    return next(InvalidAccessTokenError);
   }
   UserService.deleteUser(id)
     .then((data) => res.json(data))

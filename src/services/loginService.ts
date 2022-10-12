@@ -5,7 +5,10 @@ import { EXPIRY_TIME, EXPIRY_TIME_REFRESH_TOKEN } from '../constants/common';
 import { IDataAtToken } from '../domains/IDataAtToken';
 import IRefreshToken from '../domains/IRefreshToken';
 import { ITokens } from '../domains/ITokens';
-import { InvalidCredentialsError, InvalidRefreshToken } from '../errors/errors';
+import {
+  InvalidCredentialsError,
+  InvalidRefreshTokenError,
+} from '../errors/errors';
 import logger from '../misc/Logger';
 import RefreshTokenModel from '../models/refreshTokenModel';
 import { default as User, default as UserModel } from '../models/userModel';
@@ -83,7 +86,7 @@ export const getAccessToken = async (
 
   if (!refreshTokenFromDb || +refreshTokenFromDb.expiresAt < Date.now()) {
     await RefreshTokenModel.deleteRefreshTokenByToken(refreshToken);
-    throw InvalidRefreshToken;
+    throw InvalidRefreshTokenError;
   }
 
   try {
@@ -105,7 +108,7 @@ export const getAccessToken = async (
       message: 'got new accessToken successfully',
     };
   } catch {
-    throw InvalidRefreshToken;
+    throw InvalidRefreshTokenError;
   }
 };
 

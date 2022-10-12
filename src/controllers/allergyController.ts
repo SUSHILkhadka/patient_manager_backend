@@ -1,6 +1,6 @@
 import { NextFunction, Response } from 'express';
 import { IRequestWithTokenData } from '../domains/IRequestWithTokenData';
-import { InvalidAllergyIdInURL } from '../errors/errors';
+import { InvalidAllergyIdInURLError } from '../errors/errors';
 import * as AllergyService from '../services/allergyService';
 
 export const addAllergy = (
@@ -37,7 +37,7 @@ export const updateAllergy = (
   const { name, patientId } = req.body;
   const id = +req.params.allergyId;
   if (isNaN(id)) {
-    return next(InvalidAllergyIdInURL);
+    return next(InvalidAllergyIdInURLError);
   }
 
   AllergyService.updateAllergy({
@@ -55,7 +55,7 @@ export const deleteAllergy = (
 ) => {
   const id = +req.params.allergyId;
   if (isNaN(id)) {
-    return next(InvalidAllergyIdInURL);
+    return next(InvalidAllergyIdInURLError);
   }
   AllergyService.deleteAllergy(+id)
     .then((data) => res.json(data))
