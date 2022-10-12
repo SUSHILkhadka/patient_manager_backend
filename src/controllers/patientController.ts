@@ -1,6 +1,6 @@
 import { NextFunction, Response } from 'express';
 import { IRequestWithTokenData } from '../domains/IRequestWithTokenData';
-import { InvalidPatientIdInURL } from '../errors/errors';
+import { InvalidPatientIdInURLError } from '../errors/errors';
 import * as PatientService from '../services/patientService';
 
 export const createPatient = (
@@ -42,7 +42,7 @@ export const updatePatient = (
     req.body;
   const id = +req.params.patientId;
   if (isNaN(id)) {
-    return next(InvalidPatientIdInURL);
+    return next(InvalidPatientIdInURLError);
   }
 
   PatientService.updatePatient({
@@ -66,7 +66,7 @@ export const deletePatient = (
 ) => {
   const id = +req.params.patientId;
   if (isNaN(id)) {
-    return next(InvalidPatientIdInURL);
+    return next(InvalidPatientIdInURLError);
   }
   PatientService.deletePatient(+id)
     .then((data) => res.json(data))

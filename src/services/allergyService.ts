@@ -1,11 +1,12 @@
-import StatusCodes from 'http-status-codes';
-import { ISuccess } from '../domains/ISuccess';
-import AllergyModel from '../models/allergyModel';
-import logger from '../misc/Logger';
-import CustomError from '../middlewares/CustomError';
 import { IAllergy, IAllergyToInsert } from '../domains/IAllergy';
+import { ISuccess } from '../domains/ISuccess';
+import { AllergyNotFoundError, EmptyAllergyListError } from '../errors/errors';
+import logger from '../misc/Logger';
+import AllergyModel from '../models/allergyModel';
 
-export const addAllergy = async (allergyToInsert: IAllergyToInsert): Promise<ISuccess<IAllergy>> => {
+export const addAllergy = async (
+  allergyToInsert: IAllergyToInsert
+): Promise<ISuccess<IAllergy>> => {
   logger.info('creating new allergy');
   const allergy = await AllergyModel.addAllergy(allergyToInsert);
   logger.info('created new allergy successfully');
@@ -14,12 +15,14 @@ export const addAllergy = async (allergyToInsert: IAllergyToInsert): Promise<ISu
     message: 'new allergy created successfully',
   };
 };
-export const getAllAllergiesByPatientId = async (patientId: number): Promise<ISuccess<IAllergy[]>> => {
+export const getAllAllergiesByPatientId = async (
+  patientId: number
+): Promise<ISuccess<IAllergy[]>> => {
   logger.info('fetching all allergies of patient id = ' + patientId);
 
   const allergies = await AllergyModel.getAllAllergiesByPatientId(patientId);
   if (!allergies.length) {
-    throw new CustomError('allergies list is empty', StatusCodes.NOT_FOUND);
+    throw EmptyAllergyListError;
   }
   logger.info('allergy list fetched successfully ');
   return {
@@ -28,11 +31,13 @@ export const getAllAllergiesByPatientId = async (patientId: number): Promise<ISu
   };
 };
 
-export const updateAllergy = async (allergy: IAllergy): Promise<ISuccess<IAllergy>> => {
+export const updateAllergy = async (
+  allergy: IAllergy
+): Promise<ISuccess<IAllergy>> => {
   logger.info('updating allergy  by id = ' + allergy.id);
   const updatedAllergy = await AllergyModel.updateAllergy(allergy);
   if (!updatedAllergy) {
-    throw new CustomError("allergy  doesn't exist to edit", StatusCodes.NOT_FOUND);
+    throw AllergyNotFoundError;
   }
   logger.info('updated allergy by id');
   return {
@@ -41,11 +46,13 @@ export const updateAllergy = async (allergy: IAllergy): Promise<ISuccess<IAllerg
   };
 };
 
-export const deleteAllergy = async (id: number): Promise<ISuccess<IAllergy>> => {
+export const deleteAllergy = async (
+  id: number
+): Promise<ISuccess<IAllergy>> => {
   logger.info('deleting allergy by id = ' + id);
   const patient = await AllergyModel.deleteAllergy(id);
   if (!patient) {
-    throw new CustomError('Couldnot delete the requested allergy', StatusCodes.NOT_FOUND);
+    throw AllergyNotFoundError;
   }
   logger.info('deleted allergy by id');
   return {

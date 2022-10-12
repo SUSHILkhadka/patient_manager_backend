@@ -1,6 +1,6 @@
 import { StatusCodes } from 'http-status-codes';
 import * as yup from 'yup';
-import CustomError from '../middlewares/CustomError';
+import CustomError from '../misc/CustomError';
 
 /**
  * inputs: is input object which is to be validated
