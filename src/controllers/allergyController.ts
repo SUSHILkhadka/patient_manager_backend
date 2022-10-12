@@ -1,20 +1,15 @@
 import { NextFunction, Response } from 'express';
-import { StatusCodes } from 'http-status-codes';
 import { IRequestWithTokenData } from '../domains/IRequestWithTokenData';
-import CustomError from '../middlewares/CustomError';
+import { InvalidAllergyIdInURLError } from '../errors/errors';
 import * as AllergyService from '../services/allergyService';
-import { stringValidator } from '../utils/stringValidation';
 
-export const addAllergy = (req: IRequestWithTokenData, res: Response, next: NextFunction) => {
+export const addAllergy = (
+  req: IRequestWithTokenData,
+  res: Response,
+  next: NextFunction
+) => {
   const { name, patientId } = req.body;
-  const userId = req.id;
-  if (!userId) {
-    return next(new CustomError('id of user in token data is required', StatusCodes.BAD_REQUEST));
-  }
-  if (!stringValidator(name)) {
-    console.log('asdf');
-    return next(new CustomError("name cann't be empty", StatusCodes.BAD_REQUEST));
-  }
+
   AllergyService.addAllergy({
     name,
     patientId,
@@ -23,27 +18,28 @@ export const addAllergy = (req: IRequestWithTokenData, res: Response, next: Next
     .catch((err) => next(err));
 };
 
-export const getAllAllergiesByPatientId = (req: IRequestWithTokenData, res: Response, next: NextFunction) => {
-  const userId = req.id;
-  if (!userId) {
-    return next(new CustomError('id of user in token data is required', StatusCodes.BAD_REQUEST));
-  }
+export const getAllAllergiesByPatientId = (
+  req: IRequestWithTokenData,
+  res: Response,
+  next: NextFunction
+) => {
   const patientId = req.params.patientId;
   AllergyService.getAllAllergiesByPatientId(+patientId)
     .then((data) => res.json(data))
     .catch((err) => next(err));
 };
 
-export const updateAllergy = (req: IRequestWithTokenData, res: Response, next: NextFunction) => {
+export const updateAllergy = (
+  req: IRequestWithTokenData,
+  res: Response,
+  next: NextFunction
+) => {
   const { name, patientId } = req.body;
-  const userId = req.id;
-  const id = req.params.allergyId;
-  if (!userId || !id) {
-    return next(new CustomError('id of user in token data is required', StatusCodes.BAD_REQUEST));
+  const id = +req.params.allergyId;
+  if (isNaN(id)) {
+    return next(InvalidAllergyIdInURLError);
   }
-  if (!stringValidator(name)) {
-    return next(new CustomError("name cann't be empty", StatusCodes.BAD_REQUEST));
-  }
+
   AllergyService.updateAllergy({
     name,
     patientId,
@@ -52,11 +48,14 @@ export const updateAllergy = (req: IRequestWithTokenData, res: Response, next: N
     .then((data) => res.json(data))
     .catch((err) => next(err));
 };
-export const deleteAllergy = (req: IRequestWithTokenData, res: Response, next: NextFunction) => {
-  const userId = req.id;
-  const id = req.params.allergyId;
-  if (!userId || !id) {
-    return next(new CustomError('id of user in token data is required', StatusCodes.BAD_REQUEST));
+export const deleteAllergy = (
+  req: IRequestWithTokenData,
+  res: Response,
+  next: NextFunction
+) => {
+  const id = +req.params.allergyId;
+  if (isNaN(id)) {
+    return next(InvalidAllergyIdInURLError);
   }
   AllergyService.deleteAllergy(+id)
     .then((data) => res.json(data))

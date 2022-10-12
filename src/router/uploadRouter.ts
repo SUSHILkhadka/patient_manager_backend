@@ -1,12 +1,14 @@
 import { NextFunction, Response, Router } from 'express';
-import { StatusCodes } from 'http-status-codes';
-import CustomError from '../middlewares/CustomError';
-import cloudinary from '../config/cloudinary';
-import logger from '../misc/Logger';
-import upload from '../config/multer';
 import fs from 'fs';
+import { StatusCodes } from 'http-status-codes';
+import cloudinary from '../config/cloudinary';
+import upload from '../config/multer';
+import CustomError from '../misc/CustomError';
+import logger from '../misc/Logger';
+
 const router = Router();
 router.post('/', upload.array('keyForFileObject'), uploadFiles);
+
 /**
  *
  * @param req user's request with files
@@ -17,6 +19,10 @@ router.post('/', upload.array('keyForFileObject'), uploadFiles);
 async function uploadFiles(req: any, res: Response, next: NextFunction) {
   try {
     const filePath = req.files[0].path;
+    const fileType = req.files[0].mimetype.split('/')[0];
+    if (fileType != 'image') {
+      throw 'Invalid file type for uploading File should be image';
+    }
     logger.info('uploading file');
     const uploadResponse = await cloudinary.uploader.upload(filePath, {
       upload_preset: 'contacts-photo',
@@ -26,7 +32,6 @@ async function uploadFiles(req: any, res: Response, next: NextFunction) {
     return res.json({ url: uploadResponse.url });
   } catch (e) {
     fs.unlinkSync(req.files[0].path);
-    logger.error('upload failed');
     return next(new CustomError(`${e}`, StatusCodes.INTERNAL_SERVER_ERROR));
   }
 }
